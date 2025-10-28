@@ -238,9 +238,6 @@ export default function DashboardPage() {
                                         );
                                     })}
                                 </div>
-                                <p className="text-xs text-muted-foreground">
-                                    Biweekly = every 2 weeks.
-                                </p>
                             </div>
                         </div>
 
