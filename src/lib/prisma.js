@@ -1,4 +1,3 @@
-// lib/prisma.js
 import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = globalThis; // use globalThis instead of global
