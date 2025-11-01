@@ -1,20 +1,38 @@
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
-import {getKindeServerSession} from "@kinde-oss/kinde-auth-nextjs/server";
-import { redirect } from "next/dist/server/api-utils";
 
-export default async function AfterLogin(){
-    const {isAuthenticated, getUser} = getKindeServerSession();
-    if(!await isAuthenticated()) redirect('/');
+export const dynamic = 'force-dynamic';
 
-    const user = await getUser();
-    const email = (user?.email ?? "").toLowerCase();
-    const name = user?.given_name || user?.family_name ? `${user?.given_name || ""} ${user?.family_name || ""}`.trim() :
-     user?.email ?? null;
+const AfterLoginPage = async () => {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
 
-    await prisma.user.upsert({
-        where: {KindeId: user.id},
-        update: {email, name},
-        create: {KindeId: user.id, email, name}
+  if (!user) {
+    return redirect("/");
+  }
+
+  const dbUser = await prisma.user.findUnique({
+    where: {
+      id: user.id,
+    },
+  });
+
+  if (!dbUser) {
+    await prisma.user.create({
+      data: {
+        id: user.id,
+        email: user.email,
+        name: `${user.given_name} ${user.family_name}`,
+        // Set default preferences on creation
+        frequency: "daily",
+        topics: ["Technology", "Science"],
+        nextSendAt: new Date(), // Send first newsletter immediately or on next cycle
+      },
     });
-    redirect('/dashboard');
-}
+  }
+
+  return redirect("/dashboard");
+};
+
+export default AfterLoginPage;
