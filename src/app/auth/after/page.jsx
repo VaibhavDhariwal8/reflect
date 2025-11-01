@@ -9,7 +9,7 @@ const AfterLoginPage = async () => {
   const user = await getUser();
 
   if (!user) {
-    return redirect("/");
+    redirect("/");
   }
 
   const dbUser = await prisma.user.findUnique({
@@ -32,7 +32,7 @@ const AfterLoginPage = async () => {
     });
   }
 
-  return redirect("/dashboard");
+  redirect("/dashboard");
 };
 
 export default AfterLoginPage;
