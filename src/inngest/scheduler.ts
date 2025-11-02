@@ -6,7 +6,7 @@ const BATCH_SIZE = 500;
 const LOCK_AHEAD_MINUTES = 10;      // avoid double-enqueue during overlap
 
 export default inngest.createFunction(
-  { id: "newsletter-scheduler" },
+  { id: "newsletterScheduler" },
   { cron: CRON },
   async ({ step }) => {
     const now = new Date();
